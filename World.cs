@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,14 +9,31 @@ namespace PJT250217retry
 {
     public class World
     {
-        public World() { }
+        GameObject[] gameObjects;
+        Map map;
 
-        GameObject[,] gameObjects = new GameObject[50, 50];
-        //int objectCount = 0;
-
-        public void CreateObject(int x, int y, GameObject pObject)
+        public World(Map pMap) 
         {
-            gameObjects[y, x] = pObject;
+            map = pMap;
+            gameObjects = new GameObject[map.mapDesign1.Length * map.mapDesign1[0].Length];
+        }
+
+        int objectCount = 0;
+        int monsterIndex = 0;
+        int playerIndex = 0;
+
+        public void CreateObject(GameObject pObject)
+        {
+            gameObjects[objectCount] = pObject;
+            if (pObject.GetType().Name.Equals("Player"))
+            {
+                playerIndex = objectCount;
+            }
+            if (pObject.GetType().Name.Equals("Monster"))
+            {
+                monsterIndex = objectCount;
+            }
+            objectCount++;
         }
 
         public void Render()
@@ -45,13 +63,21 @@ namespace PJT250217retry
                         int changeX = list[2];
                         int changeY = list[3];
 
-                        if (gameObjects[changeY, changeX].shape == 'P')
+                        if (map.mapDesign1[changeY][changeX] == '*')
                         {
                             pObject.y = tempY;
                             pObject.x = tempX;
-                            gameObjects[tempY, tempX] = tempObj;
                         }
                     }
+
+                    if (gameObjects[playerIndex].y == gameObjects[monsterIndex].y && gameObjects[playerIndex].x == gameObjects[monsterIndex].x)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("You Died");
+                        Engine.Instance().Shutdown();
+                        break;
+                    }
+
                 }
             }
         }

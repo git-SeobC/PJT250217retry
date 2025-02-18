@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -10,13 +10,14 @@ namespace PJT250217retry
     public class Engine
     {
         public Map map;
-        World world = new World();
+        World world;
         private bool isRunning = true;
         public ConsoleKeyInfo keyInfo;
 
         public Engine()
         {
-
+            map = new Map();
+            world = new World(map);
         }
 
         private static Engine instance;
@@ -29,8 +30,10 @@ namespace PJT250217retry
             return instance;
         }
 
-
-
+        public void Shutdown()
+        {
+            isRunning = false;
+        }
 
         public void Load()
         {
@@ -43,27 +46,27 @@ namespace PJT250217retry
                     if (map.mapDesign1[y][x] == '*')
                     {
                         Wall wall = new Wall(x, y, map.mapDesign1[y][x]);
-                        world.CreateObject(x, y, wall);
+                        world.CreateObject(wall);
                     }
                     else if (map.mapDesign1[y][x] == ' ')
                     {
                         Floor floor = new Floor(x, y, map.mapDesign1[y][x]);
-                        world.CreateObject(x, y, floor);
+                        world.CreateObject(floor);
                     }
                     else if (map.mapDesign1[y][x] == 'P')
                     {
                         Player player = new Player(x, y, map.mapDesign1[y][x]);
-                        world.CreateObject(x, y, player);
+                        world.CreateObject(player);
                     }
                     else if (map.mapDesign1[y][x] == 'M')
                     {
                         Monster monster = new Monster(x, y, map.mapDesign1[y][x]);
-                        world.CreateObject(x, y, monster);
+                        world.CreateObject(monster);
                     }
                     else if (map.mapDesign1[y][x] == 'G')
                     {
                         Goal goal = new Goal(x, y, map.mapDesign1[y][x]);
-                        world.CreateObject(x, y, goal);
+                        world.CreateObject(goal);
                     }
                 }
             }
